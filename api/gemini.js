@@ -7,8 +7,13 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'API key not configured on server' });
+        return res.status(500).json({
+            error: 'API key (GEMINI_API_KEY) is not found in Vercel environment variables. Please check your Vercel settings.'
+        });
     }
+
+    // For debugging: verify the key exists and its length/preview
+    console.log(`Key found. Length: ${apiKey.length}, Preview: ${apiKey.substring(0, 3)}...`);
 
     try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
