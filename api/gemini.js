@@ -16,8 +16,8 @@ export default async function handler(req, res) {
     console.log(`Key found. Length: ${apiKey.length}, Preview: ${apiKey.substring(0, 3)}...`);
 
     try {
-        // v1betaからv1へ変更し、モデル名の指定を修正
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
+        // プレビューモデル（2.0など）を使用する場合は v1beta エンドポイントが必要です
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
