@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedTech Tool Box</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tool Box Portal</h1>
+            <p class="subtitle">PROJECT_DIRECTORIES: ./tools/*</p>
+        </header>
+
+        <main class="tool-grid" id="toolGrid">
+            <!-- Example Tool Card -->
+            <a href="tools/test-tool/index.html" class="tool-card">
+                <div>
+                    <span class="badge">Draft</span>
+                    <h2>Example Tool</h2>
+                    <p>初期テスト用のサンプルツールです。ディレクトリ構成の確認のために作成されました。</p>
+                </div>
+                <div class="tool-meta">
+                    <span>DIR: /test-tool</span>
+                    <span>v0.1.0</span>
+                </div>
+            </a>
+
+            <!-- Here new tools will be added -->
+        </main>
+
+        <footer>
+            <p>&copy; 2026 MedTech Development Team. Built for efficiency.</p>
+        </footer>
+    </div>
+    <script src="js/portal.js"></script>
+</body>
+</html>
