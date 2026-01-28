@@ -105,6 +105,28 @@ h1 {
     text-transform: uppercase;
 }
 
+.about-section {
+    margin-bottom: calc(var(--spacing-unit) * 8);
+    padding: calc(var(--spacing-unit) * 4);
+    border-left: 4px solid var(--border-solid);
+    background-color: #fcfcfc;
+}
+
+.about-section h3 {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: calc(var(--spacing-unit) * 2);
+    color: var(--text-main);
+}
+
+.about-section p {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    max-width: 900px;
+}
+
 footer {
     margin-top: calc(var(--spacing-unit) * 12);
     padding-top: calc(var(--spacing-unit) * 4);

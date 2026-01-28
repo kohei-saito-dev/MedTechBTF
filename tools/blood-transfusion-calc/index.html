@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>輸血関連計算 - MedTech</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        .calc-section {
+            border: 2px solid var(--border-solid);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 8px;
+        }
+
+        .input-inline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .input-inline label {
+            width: 150px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        input {
+            border: 2px solid var(--border-solid);
+            padding: 4px 8px;
+            font-family: var(--font-mono);
+            width: 80px;
+        }
+
+        .unit {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .result-box {
+            margin-top: 16px;
+            background: var(--bg-main);
+            border: 2px solid var(--border-solid);
+            padding: 16px;
+            box-shadow: 4px 4px 0px var(--border-solid);
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: var(--font-mono);
+        }
+
+        .btn-calc {
+            background: var(--accent-primary);
+            color: var(--bg-main);
+            border: 2px solid var(--border-solid);
+            padding: 8px 16px;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .btn-calc:hover {
+            background: var(--accent-hover);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-link">← Back to Portal</a>
+        <header>
+            <h1>輸血関連計算</h1>
+            <p class="subtitle">Blood Transfusion Sim / Hb Increase Estimation</p>
+        </header>
+
+        <main>
+            <!-- Hb Increase Estimation -->
+            <section class="calc-section">
+                <h2>予想Hb増加量</h2>
+                <div class="input-inline">
+                    <label>体重 (Weight)</label>
+                    <input type="number" id="weight" value="60">
+                    <span class="unit">kg</span>
+                </div>
+                <div class="input-inline">
+                    <label>RC-MAP量</label>
+                    <input type="number" id="rcMapUnits" value="2">
+                    <span class="unit">単位 (Units)</span>
+                </div>
+                <button class="btn-calc" onclick="calculateHb()">Calculate</button>
+
+                <div id="hbResult" class="result-box" style="display: none;">
+                    <p>予想Hb増加量:</p>
+                    <span class="result-value" id="hbIncreaseVal">0.0</span> <span class="unit">g/dL</span>
+                    <p style="font-size: 0.7rem; margin-top: 8px; color: var(--text-muted);">
+                        ※ 計算式: 増加量 = (Hb総量 26.5g/u) / (体重 × 循環血液量係数0.7dL/kg)
+                    </p>
+                </div>
+            </section>
+
+            <!-- Platelet Increase Estimation -->
+            <section class="calc-section">
+                <h2>予測血小板増加数</h2>
+                <div class="input-inline">
+                    <label>体重 (Weight)</label>
+                    <input type="number" id="plt_weight" value="60">
+                    <span class="unit">kg</span>
+                </div>
+                <div class="input-inline">
+                    <label>PC量 (10単位=2.0x10<sup>11</sup>)</label>
+                    <input type="number" id="plt_units" value="10">
+                    <span class="unit">単位 (Units)</span>
+                </div>
+                <button class="btn-calc" onclick="calculatePlt()">Calculate</button>
+
+                <div id="pltResult" class="result-box" style="display: none;">
+                    <p>予測血小板増加数:</p>
+                    <span class="result-value" id="pltIncreaseVal">0.0</span> <span
+                        class="unit">x10<sup>4</sup>/μL</span>
+                    <p style="font-size: 0.7rem; margin-top: 8px; color: var(--text-muted);">
+                        ※ 計算式: 増加数 = (導入血小板数 × 有効率0.67) / (体重 × 循環血液量係数75mL/kg)
+                    </p>
+                </div>
+            </section>
+
+            <!-- CCI Calculation -->
+            <section class="calc-section">
+                <h2>CCI (補正血小板増加数)</h2>
+                <div class="input-inline">
+                    <label>体表面積 (BSA)</label>
+                    <input type="number" id="cci_bsa" value="1.6" step="0.1">
+                    <span class="unit">m<sup>2</sup></span>
+                </div>
+                <div class="input-inline">
+                    <label>増加数 (Inc)</label>
+                    <input type="number" id="cci_inc" value="10000">
+                    <span class="unit">/μL</span>
+                </div>
+                <div class="input-inline">
+                    <label>導入血小板数</label>
+                    <input type="number" id="cci_plt_count" value="2.0">
+                    <span class="unit">x10<sup>11</sup></span>
+                </div>
+                <button class="btn-calc" onclick="calculateCCI()">Calculate</button>
+
+                <div id="cciResult" class="result-box" style="display: none;">
+                    <p>CCI:</p>
+                    <span class="result-value" id="cciVal">0</span>
+                    <p style="font-size: 0.7rem; margin-top: 8px; color: var(--text-muted);">
+                        ※ CCI = (増加数[/μL] × BSA [m<sup>2</sup>]) / (導入血小板数 [x10<sup>11</sup>]) <br>
+                        良好: 7,500以上(1時間後) / 4,500以上(24時間後)
+                    </p>
+                </div>
+            </section>
+
+            <!-- Coagulation Factor Activity -->
+            <section class="calc-section">
+                <h2>予測上昇凝固因子活性値</h2>
+                <div class="input-inline">
+                    <label>体重 (Weight)</label>
+                    <input type="number" id="ffp_weight" value="60">
+                    <span class="unit">kg</span>
+                </div>
+                <div class="input-inline">
+                    <label>FFP投与量</label>
+                    <input type="number" id="ffp_ml" value="480">
+                    <span class="unit">mL</span>
+                </div>
+                <button class="btn-calc" onclick="calculateFFP()">Calculate</button>
+
+                <div id="ffpResult" class="result-box" style="display: none;">
+                    <p>予測上昇活性値:</p>
+                    <span class="result-value" id="ffpVal">0</span> <span class="unit">%</span>
+                    <p style="font-size: 0.7rem; margin-top: 8px; color: var(--text-muted);">
+                        ※ 上昇値(%) = 投与量(mL) / (体重(kg) × 40mL/kg) × 100
+                    </p>
+                </div>
+            </section>
+
+            <!-- Albumin Dosage -->
+            <section class="calc-section">
+                <h2>アルブミン投与量計算</h2>
+                <div class="input-inline">
+                    <label>体重 (Weight)</label>
+                    <input type="number" id="alb_weight" value="60">
+                    <span class="unit">kg</span>
+                </div>
+                <div class="input-inline">
+                    <label>目標 Alb</label>
+                    <input type="number" id="alb_target" value="3.0" step="0.1">
+                    <span class="unit">g/dL</span>
+                </div>
+                <div class="input-inline">
+                    <label>現在 Alb</label>
+                    <input type="number" id="alb_current" value="2.0" step="0.1">
+                    <span class="unit">g/dL</span>
+                </div>
+                <button class="btn-calc" onclick="calculateAlbumin()">Calculate</button>
+
+                <div id="albResult" class="result-box" style="display: none;">
+                    <p>必要アルブミン量:</p>
+                    <span class="result-value" id="albVal">0.0</span> <span class="unit">g</span>
+                    <p id="albVialInfo" style="font-size: 0.8rem; margin-top: 8px; font-weight: bold;"></p>
+                    <p style="font-size: 0.7rem; margin-top: 8px; color: var(--text-muted);">
+                        ※ 計算式: 必要量(g) = (目標-現在) × 体重 × 0.4
+                    </p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>※ 本ツールは教育・シミュレーション用です。実際の臨床判断には使用しないでください。</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
